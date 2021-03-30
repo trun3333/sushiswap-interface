@@ -63,17 +63,17 @@ const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-top: 50px;
+  /*padding-top: 50px;*/
   align-items: center;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 10;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  /*${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 16px;
     padding-top: 1rem;
-  `};
+  `};*/
 
   z-index: 1;
 `
@@ -90,9 +90,9 @@ function App() {
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper>
         <URLWarning />
-        <HeaderWrapper>
+        {/* <HeaderWrapper>
           <Header />
-        </HeaderWrapper>
+        </HeaderWrapper> */}
         <BodyWrapper>
           <Popups />
           <Polling />
