@@ -39,6 +39,9 @@ import SushiBar from './SushiBar'
 import Tools from './Tools'
 import Saave from './Saave'
 
+// App
+import Home from 'app/pages/Home'
+
 import ComingSoonModal from '../components/ComingSoonModal'
 
 import { hot } from 'react-hot-loader'
@@ -95,6 +98,8 @@ function App() {
           <Polling />
           <Web3ReactManager>
             <Switch>
+              {/* App */}
+              <Route exact strict path="/home" component={Home} />
               {/* Tools */}
               <Route exact strict path="/tools" component={Tools} />
               <Route exact strict path="/saave" component={Saave} />
