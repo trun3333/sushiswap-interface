@@ -1,11 +1,17 @@
 import React from 'react'
 
-const GridListSwitcher = () => {
+const GridListSwitcher = ({ switcher, setSwitcher }: any) => {
+  console.log('switcher:', switcher)
   return (
     <>
       <button
         type="button"
-        className="p-1.5 rounded-md text-gray-400 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+        onClick={() => setSwitcher('list')}
+        className={
+          switcher === 'list'
+            ? 'ml-0.5 bg-white p-1.5 rounded-md shadow-sm text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-900'
+            : 'p-1.5 rounded-md text-gray-400 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-900'
+        }
       >
         {/* Heroicon name: solid/view-list */}
         <svg
@@ -25,7 +31,12 @@ const GridListSwitcher = () => {
       </button>
       <button
         type="button"
-        className="ml-0.5 bg-white p-1.5 rounded-md shadow-sm text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+        onClick={() => setSwitcher('grid')}
+        className={
+          switcher === 'grid'
+            ? 'ml-0.5 bg-white p-1.5 rounded-md shadow-sm text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-900'
+            : 'p-1.5 rounded-md text-gray-400 hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-900'
+        }
       >
         {/* Heroicon name: solid/view-grid */}
         <svg

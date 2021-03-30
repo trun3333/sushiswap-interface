@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Sidebar, Header, Gallery, NavTabs, GridListSwitcher, ActionBar } from '../components'
 
 const Home = () => {
+  // selected address
+  const [selected, setSelected] = useState<string>('')
+  const [switcher, setSwitcher] = useState<string>('grid')
+
   return (
     <>
       <div className="h-screen bg-gray-50 flex overflow-hidden">
@@ -17,7 +21,7 @@ const Home = () => {
                 <div className="flex">
                   <h1 className="flex-1 text-2xl font-bold text-gray-900">Yield Instruments</h1>
                   <div className="ml-6 bg-gray-100 p-0.5 rounded-lg flex items-center sm:hidden">
-                    <GridListSwitcher />
+                    <GridListSwitcher switcher={switcher} setSwitcher={setSwitcher} />
                   </div>
                 </div>
                 {/* Tabs */}
