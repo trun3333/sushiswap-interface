@@ -129,6 +129,7 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@sushiswap/sushi-data": "^1.0.7",
     "i18next": "^19.9.1",
     "react-app-rewire-hot-loader": "^2.0.1",
     "react-hot-loader": "^4.13.0",
