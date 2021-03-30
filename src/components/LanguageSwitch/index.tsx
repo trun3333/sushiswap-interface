@@ -55,8 +55,9 @@ const MenuItemFlag = styled.img`
 `
 
 const MenuButtonFlag = styled.img`
-  width: 22px;
-  height: 22px;
+  /* width: 22px;
+  height: 22px; */
+  width: 4.5rem;
   vertical-align: middle;
 `
 
