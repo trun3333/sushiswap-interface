@@ -14,10 +14,74 @@ export const FixedHeightRow = styled(RowBetween)`
     height: 24px;
 `
 
+const tabs = [
+    { name: 'All', href: '#', current: false },
+    { name: 'Onsen', href: '#', current: false },
+    { name: 'Perma', href: '#', current: true },
+    { name: 'Inactive', href: '#', current: false },
+    { name: 'Your Yields', href: '#', current: false }
+]
+
+function classNames(...classes: string[]) {
+    return classes.filter(Boolean).join(' ')
+}
+
+function Tabs() {
+    return (
+        <div>
+            <div className="sm:hidden">
+                <label htmlFor="tabs" className="sr-only">
+                    Select a tab
+                </label>
+                <select
+                    id="tabs"
+                    name="tabs"
+                    className="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
+                    defaultValue={tabs.find((tab: any) => tab.current)?.name}
+                >
+                    {tabs.map(tab => (
+                        <option key={tab.name}>{tab.name}</option>
+                    ))}
+                </select>
+            </div>
+            <div className="hidden sm:block">
+                <div className="border-b border-gray-200">
+                    <nav className="-mb-px flex" aria-label="Tabs">
+                        {tabs.map(tab => (
+                            <a
+                                key={tab.name}
+                                href={tab.href}
+                                className={classNames(
+                                    tab.current
+                                        ? 'border-indigo-500 text-indigo-600'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                                    'w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm'
+                                )}
+                                aria-current={tab.current ? 'page' : undefined}
+                            >
+                                {tab.name}
+                            </a>
+                        ))}
+                        <span
+                            className={
+                                'bg-gray-100 text-gray-900 hidden ml-3 py-0.5 px-2.5 rounded-full text-xs font-medium md:inline-block'
+                            }
+                        >
+                            10
+                        </span>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export default function Yield(): JSX.Element {
     const query = useFarms()
     const farms = query?.farms
     const userFarms = query?.userFarms
+
+    const [section, useSection] = useState('all')
 
     // Search Setup
     const options = { keys: ['symbol', 'name', 'pairAddress'], threshold: 0.4 }
@@ -35,23 +99,26 @@ export default function Yield(): JSX.Element {
                 <title>Yield | Sushi</title>
                 <meta name="description" content="Farm SUSHI by staking LP (Liquidity Provider) tokens" />
             </Helmet>
-            <div className="container max-w-2xl mx-auto px-0 sm:px-4">
+            <div className="container max-w-3xl mx-auto px-0 sm:px-4">
                 <Card
                     className="h-full bg-dark-900"
                     header={
-                        <CardHeader className="flex justify-between items-center bg-dark-800">
-                            <div className="flex w-full justify-between">
-                                <div className="hidden md:flex items-center">
-                                    {/* <BackButton defaultRoute="/pool" /> */}
-                                    <div className="text-lg mr-2 whitespace-nowrap">Yield Instruments</div>
+                        <>
+                            <CardHeader className="flex justify-between items-center bg-dark-800">
+                                <div className="flex w-full justify-between">
+                                    <div className="hidden md:flex items-center">
+                                        {/* <BackButton defaultRoute="/pool" /> */}
+                                        <div className="text-lg mr-2 whitespace-nowrap">Yield Instruments</div>
+                                    </div>
+                                    <Search search={search} term={term} />
                                 </div>
-                                <Search search={search} term={term} />
-                            </div>
-                        </CardHeader>
+                            </CardHeader>
+                            <Tabs />
+                        </>
                     }
                 >
                     {/* UserFarms */}
-                    {userFarms && userFarms.length > 0 && (
+                    {section === 'user' && userFarms && userFarms.length > 0 && (
                         <>
                             <div className="pb-4">
                                 <div className="grid grid-cols-3 pb-4 px-4 text-sm  text-secondary">
