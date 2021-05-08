@@ -3,6 +3,8 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useActiveWeb3React } from './useActiveWeb3React'
 import { useUniV3PositionContract } from '../hooks/useContract'
 
+import { Position } from '@uniswap/v3-sdk'
+
 const { BigNumber } = ethers
 
 const useUniV3PositionsScanner = () => {
