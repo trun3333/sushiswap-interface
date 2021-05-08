@@ -60,6 +60,8 @@ import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../consta
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './useActiveWeb3React'
 
+import UNIV3POS_ABI from '../constants/abis/univ3positions.json'
+
 // returns null on errors
 export function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
     const { library, account } = useActiveWeb3React()
@@ -73,6 +75,10 @@ export function useContract(address: string | undefined, ABI: any, withSignerIfP
             return null
         }
     }, [address, ABI, library, withSignerIfPossible, account])
+}
+
+export function useUniV3PositionContract(withSignerIfPossible?: boolean): Contract | null {
+    return useContract('0xC36442b4a4522E871399CD717aBDD847Ab11FE88', UNIV3POS_ABI, withSignerIfPossible)
 }
 
 export function useV1FactoryContract(): Contract | null {

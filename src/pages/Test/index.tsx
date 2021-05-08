@@ -8,8 +8,11 @@ import { usePairs } from 'data/Reserves'
 import Position from './Position'
 import { Dots } from 'kashi'
 import { NavLink } from 'components'
+import scanner from '../../hooks/useUniV3PositionsScanner'
 
 export default function Test() {
+    const scanned = scanner()
+    console.log(scanned)
     return <div></div>
     // const { account, chainId } = useActiveWeb3React()
 
