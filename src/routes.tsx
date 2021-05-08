@@ -40,10 +40,13 @@ import MiniChefV2 from './pages/Yield/minichefv2'
 import Positions from './pages/Positions'
 import Transactions from './pages/Transactions'
 
+import Test from './pages/Test'
+
 function Routes(): JSX.Element {
     const { chainId } = useActiveWeb3React()
     return (
         <Switch>
+            <Route exact strict path="/test" component={Test} />
             <PublicRoute exact path="/connect" component={Connect} />
             {/* BentoApps */}
             <Route exact strict path="/bento" component={Bento} />
