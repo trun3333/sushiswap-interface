@@ -2,8 +2,9 @@ import { ethers } from 'ethers'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useActiveWeb3React } from './useActiveWeb3React'
 import { useUniV3PositionContract } from '../hooks/useContract'
+import { useToken } from '../hooks/Tokens'
 
-import { Position } from '@uniswap/v3-sdk'
+import { Position, Pool } from '@uniswap/v3-sdk'
 
 const { BigNumber } = ethers
 
@@ -20,19 +21,38 @@ const useUniV3PositionsScanner = () => {
         //         .catch(err => console.error(err))
         // ])
 
-        const opensea = await fetch('https://api.opensea.io/api/v1/assets?order_direction=desc&offset=0&limit=20', {
+        // only pulls 50 at a time using offset and limit
+        const opensea = await fetch('https://api.opensea.io/api/v1/assets?asset_contract_address=0xc36442b4a4522e871399cd717abdd847ab11fe88&order_direction=desc&offset=0&limit=50', {
             method: 'GET'
         })
             .then(response => response.json())
-            .then(response => console.log(response))
+            //.then(response => console.log(response))
             .catch(err => console.error(err))
 
         console.log('opensea:', opensea)
+
+        const pos_ids = opensea.assets.map((element: any) => {
+          return element.token_id
+        })
+
+        console.log(pos_ids)
+
         // find ID from opensea description and pass ID to univ3Positions
         const id = '123' // example
 
         const findPosition = await positionContract?.positions(id)
         console.log('position:', findPosition)
+
+        /*const positions = await Promise.all(
+          pos_ids.map((element: any) => {
+            return positionContract?.positions(element)
+          })
+        )
+
+        console.log(positions)*/
+
+        //return positions
+
     }, [positionContract])
 
     useEffect(() => {
