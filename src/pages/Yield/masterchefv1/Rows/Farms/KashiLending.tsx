@@ -32,7 +32,7 @@ const KashiLending = ({ farm }: any) => {
                                 <DoubleLogo
                                     a0={'kashiLogo'}
                                     a1={farm.liquidityPair.asset.id}
-                                    size={35}
+                                    size={40}
                                     margin={true}
                                     higherRadius={'0px'}
                                 />
@@ -58,15 +58,20 @@ const KashiLending = ({ farm }: any) => {
                         </div>
                         <div className="flex justify-end items-center">
                             <div>
-                                <div className="text-right">{formattedNum(farm.tvl, true)} </div>
-                                <div className="text-secondary text-right">
+                                <div className="text-gray-500 text-right">{formattedNum(farm.tvl, true)} </div>
+                                <div className="text-gray-500 text-right">
                                     {formattedNum(farm.totalAssetStaked, false)} KMP
                                 </div>
                             </div>
                         </div>
                         <div className="flex justify-end items-center">
-                            <div className="text-right font-semibold text-xl">
-                                {farm.roiPerYear > 10000 ? '10000%+' : formattedPercent(farm.roiPerYear * 100)}
+                            <div>
+                                <div className="text-gray-500 text-right font-semibold text-base sm:text-lg">
+                                    {farm.roiPerYear > 100 ? '10000%+' : formattedPercent(farm.roiPerYear * 100)}
+                                    {/* {formattedPercent(farm.roiPerMonth * 100)}{' '} */}
+                                </div>
+                                <div className="text-gray-500 text-right text-xs">annualized</div>
+                                {/* <div className="text-gray-500 text-right text-xs">per month</div> */}
                             </div>
                         </div>
                     </div>

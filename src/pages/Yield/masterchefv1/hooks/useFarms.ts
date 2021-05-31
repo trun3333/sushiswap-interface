@@ -58,11 +58,14 @@ const useFarms = () => {
                 const balanceUSD = (balance / Number(totalSupply)) * Number(reserveUSD)
                 const rewardPerBlock =
                     ((pool.allocPoint / pool.owner.totalAllocPoint) * pool.owner.sushiPerBlock) / 1e18
+
                 const roiPerBlock = (rewardPerBlock * sushiPrice) / balanceUSD
                 const roiPerHour = roiPerBlock * blocksPerHour
                 const roiPerDay = roiPerHour * 24
                 const roiPerMonth = roiPerDay * 30
                 const roiPerYear = roiPerMonth * 12
+
+                const rewardPerDay = rewardPerBlock * blocksPerHour * 24
 
                 return {
                     ...pool,
@@ -73,6 +76,7 @@ const useFarms = () => {
                     pid: Number(pool.id),
                     pairAddress: pair.id,
                     slpBalance: pool.balance,
+                    sushiRewardPerDay: rewardPerDay,
                     liquidityPair: pair,
                     roiPerBlock,
                     roiPerHour,

@@ -13,8 +13,11 @@ import { useLingui } from '@lingui/react'
 import { ChainId } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks/useActiveWeb3React'
 
-import { LiquidityPosition, KashiLending } from './masterchefv1/Rows/Farms'
+import useStakedPending from './portfolio/hooks/useStakedPending'
+import { Header, LiquidityPosition, KashiLending } from './masterchefv1/Rows/Farms'
 import useMasterChefFarms from './masterchefv1/hooks/useFarms'
+import useMiniChefFarms from './minichef/hooks/useFarms'
+import { useMasterChefContract, useMiniChefV2Contract } from '../../hooks/useContract'
 //import useMasterChefV2Farms from './masterchefv2/hooks/useFarms'
 //import useMiniChefFarms from './minichef/hooks/useFarms'
 
@@ -27,15 +30,22 @@ export const FixedHeightRow = styled(RowBetween)`
 
 export default function Yield(): JSX.Element {
     const { i18n } = useLingui()
-    const { chainId } = useActiveWeb3React()
 
     const [section, setSection] = useState<'portfolio' | 'all' | 'kmp' | 'slp' | 'mcv2'>('all')
 
+    // MasterChef v1
+    const masterchefContract = useMasterChefContract()
+    const masterchefv1Positions = useStakedPending(masterchefContract)
     const masterchefv1 = useMasterChefFarms()
-    //const masterchefv2 = useMasterChefV2Farms()
-    //const minichef = useMiniChefFarms()
 
-    console.log('masterchefv1:', masterchefv1)
+    // MasterChef v2
+
+    // MiniChef for multichain
+    const minichefContract = useMiniChefV2Contract()
+    const minichefPositions = useStakedPending(minichefContract)
+    const minichef = useMiniChefFarms()
+
+    console.log('positions:', minichefPositions, masterchefv1Positions)
 
     const farms = masterchefv1
 
@@ -76,6 +86,7 @@ export default function Yield(): JSX.Element {
                             </CardHeader>
                         }
                     >
+                        <Header sortConfig={sortConfig} requestSort={requestSort} />
                         {section && section === 'slp' && (
                             <div className="flex-col space-y-2">
                                 {items && items.length > 0 ? (
@@ -104,7 +115,6 @@ export default function Yield(): JSX.Element {
                                 {items && items.length > 0 ? (
                                     items.map((farm: any, i: number) => {
                                         if (farm.type === 'KMP') {
-                                            console.log('kmp farm:', farm)
                                             return <KashiLending key={farm.address + '_' + i} farm={farm} />
                                         } else {
                                             return null
@@ -127,7 +137,6 @@ export default function Yield(): JSX.Element {
                             <div className="flex-col space-y-2">
                                 {items && items.length > 0 ? (
                                     items.map((farm: any, i: number) => {
-                                        console.log('farm:', farm)
                                         if (farm.type === 'KMP') {
                                             return <KashiLending key={farm.address + '_' + i} farm={farm} />
                                         } else if (farm.type === 'SLP') {

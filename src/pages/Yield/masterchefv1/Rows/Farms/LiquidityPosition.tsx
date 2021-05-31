@@ -34,7 +34,7 @@ const LiquidityPosition = ({ farm }: any) => {
                                 <DoubleLogo
                                     a0={farm.liquidityPair.token0.id}
                                     a1={farm.liquidityPair.token1.id}
-                                    size={35}
+                                    size={40}
                                     margin={true}
                                 />
                             </div>

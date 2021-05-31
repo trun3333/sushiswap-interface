@@ -4,7 +4,7 @@ const Menu = ({ section, setSection }: any) => {
     return (
         <>
             <div
-                className={`bg-dark-900 rounded flex items-center px-4 py-6 border border-transparent ${section ===
+                className={`cursor-pointer bg-dark-900 rounded flex items-center px-4 py-6 border border-transparent ${section ===
                     'portfolio' && 'border-gradient'}`}
                 onClick={() => {
                     return setSection('portfolio')
@@ -13,7 +13,7 @@ const Menu = ({ section, setSection }: any) => {
                 Your Staked Assets
             </div>
             <div
-                className={`bg-dark-900 rounded flex items-center px-4 py-6 border border-transparent ${section ===
+                className={`cursor-pointer bg-dark-900 rounded flex items-center px-4 py-6 border border-transparent ${section ===
                     'all' && 'border-gradient'}`}
                 onClick={() => {
                     return setSection('all')
@@ -22,7 +22,7 @@ const Menu = ({ section, setSection }: any) => {
                 All Yield Assets
             </div>
             <div
-                className={`bg-dark-900 rounded flex items-center px-4 py-6 border border-transparent ${section ===
+                className={`cursor-pointer bg-dark-900 rounded flex items-center px-4 py-6 border border-transparent ${section ===
                     'kmp' && 'border-gradient'}`}
                 onClick={() => {
                     return setSection('kmp')
@@ -31,7 +31,7 @@ const Menu = ({ section, setSection }: any) => {
                 Lending Yield Assets
             </div>
             <div
-                className={`bg-dark-900 rounded flex items-center px-4 py-6 border border-transparent ${section ===
+                className={`cursor-pointer bg-dark-900 rounded flex items-center px-4 py-6 border border-transparent ${section ===
                     'slp' && 'border-gradient'}`}
                 onClick={() => {
                     return setSection('slp')
@@ -40,7 +40,7 @@ const Menu = ({ section, setSection }: any) => {
                 Liquidity Yield Assets
             </div>
             <div
-                className={`bg-dark-900 rounded flex items-center px-4 py-6 border border-transparent ${section ===
+                className={`cursor-pointer bg-dark-900 rounded flex items-center px-4 py-6 border border-transparent ${section ===
                     'mcv2' && 'border-gradient'}`}
                 onClick={() => {
                     return setSection('mcv2')
