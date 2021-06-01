@@ -1,5 +1,5 @@
 import { useFuse, useSortableData } from 'hooks'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ChevronDown, ChevronUp } from 'react-feather'
 import styled from 'styled-components'
 import { RowBetween } from '../../components/Row'
@@ -22,10 +22,7 @@ import { useMasterChefContract, useMiniChefV2Contract } from '../../hooks/useCon
 //import useMiniChefFarms from './minichef/hooks/useFarms'
 
 import _ from 'lodash'
-import { BigNumber } from '@ethersproject/bignumber'
-
 import Menu from './Menu'
-import Loading from './Loading'
 
 export const FixedHeightRow = styled(RowBetween)`
     height: 24px;
@@ -36,24 +33,62 @@ export default function Yield(): JSX.Element {
 
     const [section, setSection] = useState<'portfolio' | 'all' | 'kmp' | 'slp' | 'mcv2'>('all')
 
-    // MasterChef v1
+    // Get Farms
+    const masterchefv1 = useMasterChefFarms()
+    const minichef = useMiniChefFarms()
+
+    // Get Contracts
     const masterchefContract = useMasterChefContract()
+    const minichefContract = useMiniChefV2Contract()
+
+    // Get Portfolios
     const masterchefv1Positions = useStakedPending(masterchefContract)
+    const minichefPositions = useStakedPending(minichefContract)
+
+    useEffect(() => {
+        // determine masterchefv1 positions
+        const masterchefv1WithPids = masterchefv1Positions?.[0].map((position, index) => {
+            return {
+                pid: index,
+                pending: position?.result?.[0],
+                staked: masterchefv1Positions?.[1][index].result?.amount
+            }
+        })
+        const masterchefv1Filtered = masterchefv1WithPids.filter((position: any) => {
+            return position?.pending?.gt(0) || position?.staked?.gt(0)
+        })
+
+        // determine minichef positions
+        const minichefWithPids = minichefPositions?.[0].map((position, index) => {
+            return {
+                pid: index,
+                pending: position?.result?.[0],
+                staked: minichefPositions?.[1][index].result?.amount
+            }
+        })
+        const minichefFiltered = minichefWithPids.filter((position: any) => {
+            return position?.pending?.gt(0) || position?.staked?.gt(0)
+        })
+
+        console.log('results:', { masterchefv1Filtered: masterchefv1Filtered, minichefFiltered: minichefFiltered })
+
+        // const masterchefv1Filtered = _.filter(masterchefv1Positions?.[0], function(position) {
+        //     console.log('position:', position, position.result?.[0].gt(0))
+        // })
+    }, [masterchefv1Positions, minichefPositions])
+
+    // 1. Add Portfolios
+    // 2. Add MCV2 Hooks
+    // 3. Add Alchemix Banner
+    // 4. Fix mobile grid spanning
+    // 5. Make SUSHI/day text
+
     // const masterchefv1Filtered = _.filter(masterchefv1Positions?.[0], function(position) {
     //     console.log('position:', position, position.result?.[0].gt(0))
     //     //return position?.result?.gt(0)
     // })
 
-    const masterchefv1 = useMasterChefFarms()
-
     // MasterChef v2
-
-    // MiniChef for multichain
-    const minichefContract = useMiniChefV2Contract()
-    const minichefPositions = useStakedPending(minichefContract)
-    const minichef = useMiniChefFarms()
-
-    console.log('positions:', minichefPositions, masterchefv1Positions)
 
     const farms = masterchefv1
 
@@ -89,7 +124,7 @@ export default function Yield(): JSX.Element {
                                     </div>
                                     <Search search={search} term={term} />
                                 </div>
-                                <div className="block lg:hidden pt-6">
+                                <div className="block lg:hidden pt-6 container">
                                     <Menu section={section} setSection={setSection} />
                                 </div>
                             </CardHeader>

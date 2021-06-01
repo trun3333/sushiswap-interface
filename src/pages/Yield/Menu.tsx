@@ -2,7 +2,7 @@ import React from 'react'
 
 const Menu = ({ section, setSection }: any) => {
     return (
-        <div className="overflow-x-auto max-w-md">
+        <div className="overflow-x-auto">
             <div className="flex flex-row space-x-2 text-xs whitespace-nowrap lg:text-base lg:flex-col lg:space-y-2">
                 <div
                     className={`cursor-pointer bg-dark-900 rounded flex items-center px-4 py-6 border border-transparent ${section ===
