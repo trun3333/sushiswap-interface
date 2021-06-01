@@ -51,6 +51,7 @@ import useENSAddress from '../../hooks/useENSAddress'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { useLingui } from '@lingui/react'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
+
 import MisoBanner from '../../assets/images/miso-banner.jpg'
 import MisoLogo from '../../assets/images/miso-logo.png'
 import Slider from 'react-slick';
@@ -365,7 +366,7 @@ export default function Swap() {
                             <DarkCard>
                                 <div className="flex justify-between items-center">
                                     <div>
-                                        <div className="text-white">New Yield Farms! renDOGE, SNX, USDC, DAI</div>
+                                        <div className="text-white">New Yield Farms! WOOFY, GRT, FRAX, FXS </div>
                                         <div className="text-purple text-sm">Add liquidity and stake now</div>
                                     </div>
                                     <div className=""></div>
@@ -634,6 +635,7 @@ export default function Swap() {
                         )}
                         {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
                     </BottomGrouping>
+                  
                     {/* {!trade && chainId && chainId === ChainId.MAINNET && (
                         <div
                             className="sm:block w-full cursor-pointer pt-4"
@@ -705,6 +707,7 @@ export default function Swap() {
                         </div>
                     </Slider>
                     )}
+        
                 </Wrapper>
             </div>
             {!swapIsUnsupported ? (
