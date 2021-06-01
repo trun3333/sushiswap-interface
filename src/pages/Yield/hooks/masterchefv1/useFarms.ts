@@ -4,12 +4,17 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { POOL_DENY } from '../../../../constants'
 import { getAverageBlockTime } from 'apollo/getAverageBlockTime'
+import _ from 'lodash'
 import orderBy from 'lodash/orderBy'
 //import range from 'lodash/range'
 import sushiData from '@sushiswap/sushi-data'
 
+import { useActiveWeb3React } from '../../../../hooks/useActiveWeb3React'
+import { ChainId } from '@sushiswap/sdk'
+
 // Todo: Rewrite in terms of web3 as opposed to subgraph
 const useFarms = () => {
+    const { account, chainId } = useActiveWeb3React()
     const [farms, setFarms] = useState<any | undefined>()
 
     const fetchSLPFarms = useCallback(async () => {
@@ -57,20 +62,25 @@ const useFarms = () => {
                 const balanceUSD = (balance / Number(totalSupply)) * Number(reserveUSD)
                 const rewardPerBlock =
                     ((pool.allocPoint / pool.owner.totalAllocPoint) * pool.owner.sushiPerBlock) / 1e18
+
                 const roiPerBlock = (rewardPerBlock * sushiPrice) / balanceUSD
                 const roiPerHour = roiPerBlock * blocksPerHour
                 const roiPerDay = roiPerHour * 24
                 const roiPerMonth = roiPerDay * 30
                 const roiPerYear = roiPerMonth * 12
 
+                const rewardPerDay = rewardPerBlock * blocksPerHour * 24
+
                 return {
                     ...pool,
+                    contract: 'masterchefv1',
                     type: 'SLP',
                     symbol: pair.token0.symbol + '-' + pair.token1.symbol,
                     name: pair.token0.name + ' ' + pair.token1.name,
                     pid: Number(pool.id),
                     pairAddress: pair.id,
                     slpBalance: pool.balance,
+                    sushiRewardPerDay: rewardPerDay,
                     liquidityPair: pair,
                     roiPerBlock,
                     roiPerHour,
@@ -116,6 +126,7 @@ const useFarms = () => {
                 return {
                     ...pool,
                     ...pair,
+                    contract: 'masterchefv1',
                     type: 'KMP',
                     pid: Number(pool.id),
                     pairAddress: pair?.id,
@@ -142,11 +153,17 @@ const useFarms = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const results = await Promise.all([fetchSLPFarms(), fetchKMPFarms()])
-            console.log('farm results:', results)
+            if (chainId === ChainId.MAINNET || !account) {
+                const results = await Promise.all([fetchSLPFarms(), fetchKMPFarms()])
+                const combined = _.concat(results[0], results[1])
+                const sorted = orderBy(combined, ['pid'], ['desc'])
+                setFarms(sorted)
+            } else {
+                setFarms([])
+            }
         }
         fetchData()
-    }, [fetchKMPFarms, fetchSLPFarms])
+    }, [account, chainId, fetchKMPFarms, fetchSLPFarms])
 
     return farms
 }

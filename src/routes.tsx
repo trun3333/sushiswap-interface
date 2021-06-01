@@ -36,7 +36,7 @@ import {
 import Tools from './pages/Tools'
 import Vesting from './pages/Vesting'
 import Yield from './pages/Yield'
-import MasterChefV1Debug from './pages/Yield/masterchefv1/debug'
+// import MasterChefV1Debug from './pages/Yield/masterchefv1/debug'
 import Positions from './pages/Positions'
 import Transactions from './pages/Transactions'
 
@@ -66,9 +66,6 @@ function Routes(): JSX.Element {
                 <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
             )}
             {chainId === ChainId.MAINNET && <Route exact strict path="/yield" component={Yield} />}
-            {chainId === ChainId.MAINNET && (
-                <Route exact strict path="/yield/debug/:address" component={MasterChefV1Debug} />
-            )}
             {chainId === ChainId.MATIC && <Route exact strict path="/yield" component={Yield} />}
             {chainId === ChainId.MAINNET && <Route exact strict path="/vesting" component={Vesting} />}
 

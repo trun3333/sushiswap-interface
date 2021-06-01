@@ -13,13 +13,12 @@ import { useLingui } from '@lingui/react'
 import { ChainId } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks/useActiveWeb3React'
 
-import useStakedPending from './portfolio/hooks/useStakedPending'
-import { Header, LiquidityPosition, KashiLending } from './masterchefv1/Rows/Farms'
-import useMasterChefFarms from './masterchefv1/hooks/useFarms'
-import useMiniChefFarms from './minichef/hooks/useFarms'
+import useStakedPending from './hooks/portfolio/useStakedPending'
+import { Header, LiquidityPosition, KashiLending } from './components/Farms'
+import useMasterChefFarms from './hooks/masterchefv1/useFarms'
+import useMasterChefV2Farms from './hooks/masterchefv2/useFarms'
+import useMiniChefFarms from './hooks/minichef/useFarms'
 import { useMasterChefContract, useMiniChefV2Contract } from '../../hooks/useContract'
-//import useMasterChefV2Farms from './masterchefv2/hooks/useFarms'
-//import useMiniChefFarms from './minichef/hooks/useFarms'
 
 import _ from 'lodash'
 import Menu from './Menu'
@@ -30,12 +29,20 @@ export const FixedHeightRow = styled(RowBetween)`
 
 export default function Yield(): JSX.Element {
     const { i18n } = useLingui()
-
     const [section, setSection] = useState<'portfolio' | 'all' | 'kmp' | 'slp' | 'mcv2'>('all')
+    const { account, chainId } = useActiveWeb3React()
 
     // Get Farms
     const masterchefv1 = useMasterChefFarms()
+    const masterchefv2 = useMasterChefV2Farms()
     const minichef = useMiniChefFarms()
+    const allFarms = _.concat(
+        masterchefv2 ? masterchefv2 : [],
+        minichef ? minichef : [],
+        masterchefv1 ? masterchefv1 : []
+    )
+
+    console.log('masterchefv2:', masterchefv2)
 
     // Get Contracts
     const masterchefContract = useMasterChefContract()
@@ -97,20 +104,8 @@ export default function Yield(): JSX.Element {
         setPortfolio(_.concat(minichefPortfolio, masterchefv1Portfolio))
     }, [masterchefv1, masterchefv1Positions, minichef, minichefPositions])
 
-    // 1. Add Portfolios
-    // 2. Add MCV2 Hooks
-    // 3. Add Alchemix Banner
-    // 4. Fix mobile grid spanning
-    // 5. Make SUSHI/day text
-
-    // const masterchefv1Filtered = _.filter(masterchefv1Positions?.[0], function(position) {
-    //     console.log('position:', position, position.result?.[0].gt(0))
-    //     //return position?.result?.gt(0)
-    // })
-
     // MasterChef v2
-
-    const farms = masterchefv1
+    const farms = allFarms
 
     //Search Setup
     const options = { keys: ['symbol', 'name', 'pairAddress'], threshold: 0.4 }
@@ -154,9 +149,11 @@ export default function Yield(): JSX.Element {
                             <>
                                 <Header sortConfig={sortConfig} requestSort={requestSort} />
                                 <div className="flex-col space-y-2">
-                                    {items && items.length > 0 ? (
-                                        items.map((farm: any, i: number) => {
-                                            if (farm.type === 'SLP') {
+                                    {portfolio && portfolio.length > 0 ? (
+                                        portfolio.map((farm: any, i: number) => {
+                                            if (farm.type === 'KMP') {
+                                                return <KashiLending key={farm.address + '_' + i} farm={farm} />
+                                            } else if (farm.type === 'SLP') {
                                                 return <LiquidityPosition key={farm.address + '_' + i} farm={farm} />
                                             } else {
                                                 return null
@@ -168,7 +165,7 @@ export default function Yield(): JSX.Element {
                                                 <div className="w-full text-center py-6">No Results.</div>
                                             ) : (
                                                 <div className="w-full text-center py-6">
-                                                    <Dots>Fetching Farms</Dots>
+                                                    <Dots>Fetching Portfolio</Dots>
                                                 </div>
                                             )}
                                         </>

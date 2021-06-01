@@ -4,15 +4,16 @@ import { useActiveWeb3React } from 'hooks/useActiveWeb3React'
 import { useBoringHelperContract } from 'hooks/useContract'
 import orderBy from 'lodash/orderBy'
 import { useCallback, useEffect, useState } from 'react'
-import { exchange_matic, minichefv2_matic } from 'apollo/client'
-import { getOneDayBlock } from 'apollo/getAverageBlockTime'
+import { exchange, masterchefv2 } from 'apollo/client'
+import { getAverageBlockTime, getOneDayBlock } from 'apollo/getAverageBlockTime'
 import {
     tokenQuery,
     liquidityPositionSubsetQuery,
     pairSubsetQuery,
     pairTimeTravelQuery,
-    miniChefPoolQuery
+    masterchefv2PoolsQuery
 } from 'apollo/queries'
+import { ChainId } from '@sushiswap/sdk'
 //import Fraction from '../../../entities/Fraction'
 //import { resetIdCounter } from 'react-tabs'
 //import { apys } from '@lufycz/sushi-data/dist/sushi/queries/masterchef'
@@ -25,30 +26,31 @@ const useFarms = () => {
 
     const fetchAllFarms = useCallback(async () => {
         const results = await Promise.all([
-            minichefv2_matic.query({
-                query: miniChefPoolQuery
+            masterchefv2.query({
+                query: masterchefv2PoolsQuery
             }),
-            exchange_matic.query({
+            exchange.query({
                 query: liquidityPositionSubsetQuery,
-                variables: { user: String('0x0769fd68dFb93167989C6f7254cd0D766Fb2841F').toLowerCase() } //minichef
+                variables: { user: String('0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d').toLowerCase() } //masterchefv2
             }),
             sushiData.sushi.priceUSD(),
-            exchange_matic.query({
+            exchange.query({
                 query: tokenQuery,
-                variables: { id: String('0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270').toLowerCase() } //matic
+                variables: { id: String('0xdbdb4d16eda451d0503b854cf79d55697f90c8df').toLowerCase() } // alcx
             }),
-            sushiData.exchange.ethPrice()
-            //getAverageBlockTime(chainId),
-            //sushiData.exchange.token({ token_address: '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0' }) // matic
+            sushiData.exchange.ethPrice(),
+            getAverageBlockTime()
         ])
 
         const pools = results[0]?.data.pools
+
+        console.log('mcv2_pools:', pools)
         const pairAddresses = pools
             .map((pool: any) => {
                 return pool.pair
             })
             .sort()
-        const pairsQuery = await exchange_matic.query({
+        const pairsQuery = await exchange.query({
             query: pairSubsetQuery,
             variables: { pairAddresses }
         })
@@ -56,7 +58,7 @@ const useFarms = () => {
         const pairs24AgoQuery = await Promise.all(
             pairAddresses.map((address: string) => {
                 //console.log(address, oneDayBlock)
-                return exchange_matic.query({
+                return exchange.query({
                     query: pairTimeTravelQuery,
                     variables: { id: address, block: oneDayBlock }
                 })
@@ -69,19 +71,18 @@ const useFarms = () => {
         })
         const liquidityPositions = results[1]?.data.liquidityPositions
         const sushiPrice = results[2]
-        //const averageBlockTime = results[3]
+
         const pairs = pairsQuery?.data.pairs
-        const maticPrice = results[3].data.token.derivedETH * results[4]
+        const alcxPrice = results[3].data.token.derivedETH * results[4]
+        const averageBlockTime = results[3]
 
         const farms = pools
             .filter((pool: any) => {
                 //console.log(KASHI_PAIRS.includes(Number(pool.id)), pool, Number(pool.id))
                 //console.log(pool.id, Number(pool.miniChef.totalAllocPoint) > 0)
-                return (
-                    pairs.find((pair: any) => pair?.id === pool?.pair) &&
-                    Number(pool.miniChef.totalAllocPoint) > 0 &&
-                    !['4'].includes(pool?.id) // manual filter for now
-                )
+                return pairs.find((pair: any) => pair?.id === pool?.pair)
+                // && Number(pool.miniChef.totalAllocPoint) > 0
+                // &&!['4'].includes(pool?.id) // manual filter for now
             })
             .map((pool: any) => {
                 const pair = pairs.find((pair: any) => pair.id === pool.pair)
@@ -90,52 +91,30 @@ const useFarms = () => {
                     (liquidityPosition: any) => liquidityPosition.pair.id === pair.id
                 )
 
-                const totalAllocPoint = 1000 //pool.miniChef.totalAllocPoint
+                const totalAllocPoint = 100 //pool.masterchefv2.totalAllocPoint
 
                 const balance = Number(pool.slpBalance / 1e18)
                 const balanceUSD = (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD)
 
-                const rewardPerSecond = ((pool.allocPoint / totalAllocPoint) * pool.miniChef.sushiPerSecond) / 1e18
-                const rewardPerDay = rewardPerSecond * 86400
+                const sushiPerBlock = 20
+                const rewardPerBlock = ((pool.allocPoint / 26480) * 20) / 1e18
 
-                //console.log('pool:', pool.allocPoint, totalAllocPoint, pool.miniChef.sushiPerSecond)
-
-                const secondaryRewardPerSecond =
-                    ((pool.allocPoint / totalAllocPoint) * pool.rewarder.rewardPerSecond) / 1e18
-                const secondaryRewardPerDay = secondaryRewardPerSecond * 86400
-
-                // const secondaryRewardPerSecond = pool.rewarder.rewardPerSecond / 1e18
-                //console.log('rewardsPerDay:', rewardPerDay * 10, secondaryRewardPerDay * 10)
-
-                // const roiPerSecond = (rewardPerSecond * 2 * sushiPrice) / balanceUSD // *2 with matic rewards
-                // console.log('rewardPerSecond:', rewardPerSecond)
-                // console.log('secondaryRewardPerSecond:', secondaryRewardPerSecond)
-                const roiPerSecond = (rewardPerSecond * sushiPrice + secondaryRewardPerSecond * maticPrice) / balanceUSD // *2 with matic rewards
-                const roiPerHour = roiPerSecond * 3600
+                const blocksPerHour = 3600 / Number(averageBlockTime)
+                const roiPerBlock = (rewardPerBlock * sushiPrice) / balanceUSD
+                const roiPerHour = roiPerBlock * blocksPerHour
                 const roiPerDay = roiPerHour * 24
                 const roiPerMonth = roiPerDay * 30
-                //const oneYearFees = 0.05
-                const oneDayVolume = pair.volumeUSD ? pair.volumeUSD - pair24Ago?.volumeUSD : 10000
-                const oneYearFees = (oneDayVolume * 0.003 * 365) / pair.reserveUSD
-                const oneMonthFees = oneYearFees ? oneYearFees / 12 : 0.05
-                const rewardAPR = roiPerMonth * 12
-                //const roiPerYear = rewardAPR
-                //where (1 + r/n )** n – 1
-                const roiPerYear = (1 + ((roiPerMonth + oneMonthFees) * 12) / 120) ** 120 - 1
-                // let roiPerYear
-                // if (rewardAPR < 0.35) {
-                //     roiPerYear = (1 + ((roiPerMonth + oneMonthFees) * 12) / 120) ** 120 - 1 // compounding 3 days APY
-                // } else {
-                //     roiPerYear = (1 + ((roiPerMonth + oneMonthFees) * 12) / 24) ** 24 - 1 // compounding 2 weeks APY
-                // }
-                //const roiPerYear = (1 + ((roiPerDay + feeFactorAnnualized / 365) * 365) / 365) ** 365 - 1 // compounding daily APY
-                //const roiPerYear = roiPerMonth * 12
-                //console.log('pool:', pool.slpBalance)
-                //console.log(pair.token0.symbol + '-' + pair.token1.symbol, roiPerYear)
+                const roiPerYear = roiPerMonth * 12
+
+                const rewardPerDay = rewardPerBlock * blocksPerHour * 24
+
+                const secondaryRewardPerBlock = 220316772748387000 / 1e18
+                const secondaryRewardPerDay = secondaryRewardPerBlock * blocksPerHour * 24
 
                 return {
                     ...pool,
                     type: 'SLP',
+                    contract: 'masterchefv2',
                     symbol: pair.token0.symbol + '-' + pair.token1.symbol,
                     name: pair.token0.name + ' ' + pair.token1.name,
                     pid: Number(pool.id),
@@ -143,12 +122,12 @@ const useFarms = () => {
                     slpBalance: pool.slpBalance,
                     liquidityPair: pair,
                     rewardTokens: [
-                        '0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a', //SUSHI on Matic
-                        '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270' // MATIC on Matic
+                        '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2', //SUSHI on Mainnet
+                        '0xdBdb4d16EdA451D0503b854CF79D55697F90c8DF' // ALCX on Mainnet
                     ],
                     sushiRewardPerDay: rewardPerDay,
                     secondaryRewardPerDay: secondaryRewardPerDay,
-                    roiPerSecond,
+                    roiPerBlock,
                     roiPerHour,
                     roiPerDay,
                     roiPerMonth,
@@ -166,12 +145,16 @@ const useFarms = () => {
         const pids = sorted.map(pool => {
             return pool.pid
         })
-        setFarms({ farms: sorted })
+        setFarms(sorted)
     }, [chainId])
 
     useEffect(() => {
-        fetchAllFarms()
-    }, [fetchAllFarms])
+        if (chainId === ChainId.MAINNET) {
+            fetchAllFarms()
+        } else {
+            setFarms([])
+        }
+    }, [chainId, fetchAllFarms])
 
     return farms
 }

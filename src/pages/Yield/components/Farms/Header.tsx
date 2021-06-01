@@ -19,7 +19,7 @@ const Header = ({ sortConfig, requestSort }: any) => {
                             (sortConfig.direction === 'descending' && <ChevronDown size={12} />))}
                 </div>
                 <div className="hidden md:block ml-4">
-                    <div className="flex items-center justify-start">
+                    <div className="flex items-center justify-end">
                         <div className="pr-2">{i18n._(t`Pool Rewards`)}</div>
                     </div>
                 </div>

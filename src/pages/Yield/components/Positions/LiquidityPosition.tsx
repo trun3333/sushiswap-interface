@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { formattedNum } from '../../../../../utils'
-import { DoubleLogo, Paper } from '../../../components'
-import InputGroup from '../../Details'
+import { formattedNum } from '../../../../utils'
+import { DoubleLogo, Paper } from '../../components'
+import { MasterChefV1Details, MasterChefV2Details, MiniChefDetails } from '../Details'
 
-const KashiLending = ({ farm }: any) => {
+const LiquidityPosition = ({ farm }: any) => {
     const [expand, setExpand] = useState<boolean>(false)
     return (
         <>
@@ -41,8 +41,28 @@ const KashiLending = ({ farm }: any) => {
                             </div>
                         </div>
                     </div>
-                    {expand && (
-                        <InputGroup
+                    {expand && farm.contract === 'masterchefv1' && (
+                        <MasterChefV1Details
+                            pid={farm.pid}
+                            pairAddress={farm.pairAddress}
+                            pairSymbol={farm.symbol}
+                            token0Address={farm.liquidityPair.token0.id}
+                            token1Address={farm.liquidityPair.token1.id}
+                            type={'LP'}
+                        />
+                    )}
+                    {expand && farm.contract === 'masterchefv2' && (
+                        <MasterChefV2Details
+                            pid={farm.pid}
+                            pairAddress={farm.pairAddress}
+                            pairSymbol={farm.symbol}
+                            token0Address={farm.liquidityPair.token0.id}
+                            token1Address={farm.liquidityPair.token1.id}
+                            type={'LP'}
+                        />
+                    )}
+                    {expand && farm.contract === 'minichef' && (
+                        <MiniChefDetails
                             pid={farm.pid}
                             pairAddress={farm.pairAddress}
                             pairSymbol={farm.symbol}
@@ -57,4 +77,4 @@ const KashiLending = ({ farm }: any) => {
     )
 }
 
-export default KashiLending
+export default LiquidityPosition

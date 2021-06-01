@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { formattedNum } from '../../../../../utils'
-import { DoubleLogo, Paper } from '../../../components'
-import InputGroup from '../../Details'
+import { formattedNum } from '../../../../utils'
+import { DoubleLogo, Paper } from '../../components'
+import { MasterChefV1Details } from '../Details'
 
-const LiquidityPosition = ({ farm }: any) => {
+const KashiLending = ({ farm }: any) => {
     const [expand, setExpand] = useState<boolean>(false)
     return (
         <>
@@ -42,7 +42,7 @@ const LiquidityPosition = ({ farm }: any) => {
                         </div>
                     </div>
                     {expand && (
-                        <InputGroup
+                        <MasterChefV1Details
                             pid={farm.pid}
                             pairAddress={farm.pairAddress}
                             pairSymbol={farm.symbol}
@@ -57,4 +57,4 @@ const LiquidityPosition = ({ farm }: any) => {
     )
 }
 
-export default LiquidityPosition
+export default KashiLending
