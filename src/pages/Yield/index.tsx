@@ -42,40 +42,60 @@ export default function Yield(): JSX.Element {
     const minichefContract = useMiniChefV2Contract()
 
     // Get Portfolios
+    const [portfolio, setPortfolio] = useState<any[]>()
     const masterchefv1Positions = useStakedPending(masterchefContract)
     const minichefPositions = useStakedPending(minichefContract)
-
     useEffect(() => {
         // determine masterchefv1 positions
-        const masterchefv1WithPids = masterchefv1Positions?.[0].map((position, index) => {
-            return {
-                pid: index,
-                pending: position?.result?.[0],
-                staked: masterchefv1Positions?.[1][index].result?.amount
-            }
-        })
-        const masterchefv1Filtered = masterchefv1WithPids.filter((position: any) => {
-            return position?.pending?.gt(0) || position?.staked?.gt(0)
-        })
+        let masterchefv1Portfolio
+        if (masterchefv1) {
+            const masterchefv1WithPids = masterchefv1Positions?.[0].map((position, index) => {
+                return {
+                    pid: index,
+                    pending_bn: position?.result?.[0],
+                    staked_bn: masterchefv1Positions?.[1][index].result?.amount
+                }
+            })
+            const masterchefv1Filtered = masterchefv1WithPids.filter(position => {
+                return position?.pending_bn?.gt(0) || position?.staked_bn?.gt(0)
+            })
+            // fetch any relevant details through pid
+            const masterchefv1PositionsWithDetails = masterchefv1Filtered.map(position => {
+                const pair = masterchefv1?.find((pair: any) => pair.pid === position.pid)
+                return {
+                    ...pair,
+                    ...position
+                }
+            })
+            masterchefv1Portfolio = masterchefv1PositionsWithDetails
+        }
 
-        // determine minichef positions
-        const minichefWithPids = minichefPositions?.[0].map((position, index) => {
-            return {
-                pid: index,
-                pending: position?.result?.[0],
-                staked: minichefPositions?.[1][index].result?.amount
-            }
-        })
-        const minichefFiltered = minichefWithPids.filter((position: any) => {
-            return position?.pending?.gt(0) || position?.staked?.gt(0)
-        })
+        let minichefPortfolio
+        if (minichef) {
+            // determine minichef positions
+            const minichefWithPids = minichefPositions?.[0].map((position, index) => {
+                return {
+                    pid: index,
+                    pending: position?.result?.[0],
+                    staked: minichefPositions?.[1][index].result?.amount
+                }
+            })
+            const minichefFiltered = minichefWithPids.filter((position: any) => {
+                return position?.pending?.gt(0) || position?.staked?.gt(0)
+            })
+            // fetch any relevant details through pid
+            const minichefPositionsWithDetails = minichefFiltered.map(position => {
+                const pair = minichef?.find((pair: any) => pair.pid === position.pid)
+                return {
+                    ...pair,
+                    ...position
+                }
+            })
+            minichefPortfolio = minichefPositionsWithDetails
+        }
 
-        console.log('results:', { masterchefv1Filtered: masterchefv1Filtered, minichefFiltered: minichefFiltered })
-
-        // const masterchefv1Filtered = _.filter(masterchefv1Positions?.[0], function(position) {
-        //     console.log('position:', position, position.result?.[0].gt(0))
-        // })
-    }, [masterchefv1Positions, minichefPositions])
+        setPortfolio(_.concat(minichefPortfolio, masterchefv1Portfolio))
+    }, [masterchefv1, masterchefv1Positions, minichef, minichefPositions])
 
     // 1. Add Portfolios
     // 2. Add MCV2 Hooks
