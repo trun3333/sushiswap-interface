@@ -21,6 +21,9 @@ import { useMasterChefContract, useMiniChefV2Contract } from '../../hooks/useCon
 //import useMasterChefV2Farms from './masterchefv2/hooks/useFarms'
 //import useMiniChefFarms from './minichef/hooks/useFarms'
 
+import _ from 'lodash'
+import { BigNumber } from '@ethersproject/bignumber'
+
 import Menu from './Menu'
 import Loading from './Loading'
 
@@ -36,6 +39,11 @@ export default function Yield(): JSX.Element {
     // MasterChef v1
     const masterchefContract = useMasterChefContract()
     const masterchefv1Positions = useStakedPending(masterchefContract)
+    // const masterchefv1Filtered = _.filter(masterchefv1Positions?.[0], function(position) {
+    //     console.log('position:', position, position.result?.[0].gt(0))
+    //     //return position?.result?.gt(0)
+    // })
+
     const masterchefv1 = useMasterChefFarms()
 
     // MasterChef v2
@@ -66,97 +74,132 @@ export default function Yield(): JSX.Element {
                 <title>{i18n._(t`Yield`)} | Sushi</title>
                 <meta name="description" content="Farm SUSHI by staking LP (Liquidity Provider) tokens" />
             </Helmet>
-            <div className="container mx-auto grid grid-cols-12 gap-4">
-                <div className="sticky top-0 col-span-3 space-y-2 " style={{ maxHeight: '40rem' }}>
+            <div className="container mx-auto grid grid-cols-4 gap-4">
+                <div className="hidden lg:block sticky top-0 md:col-span-1" style={{ maxHeight: '40rem' }}>
                     <Menu section={section} setSection={setSection} />
                 </div>
-                <div className="col-span-9">
+                <div className="col-span-4 lg:col-span-3">
                     <Card
                         className="h-full bg-dark-900"
                         header={
-                            <CardHeader className="flex justify-between items-center bg-dark-800">
+                            <CardHeader className="flex flex-col items-center bg-dark-800">
                                 <div className="flex w-full justify-between">
                                     <div className="hidden md:flex items-center">
-                                        <div className="text-lg mr-2 whitespace-nowrap">
-                                            {i18n._(t`Yield Instruments`)}
-                                        </div>
+                                        <div className="text-lg mr-2 whitespace-nowrap">{i18n._(t`Yield Farms`)}</div>
                                     </div>
                                     <Search search={search} term={term} />
+                                </div>
+                                <div className="block lg:hidden pt-6">
+                                    <Menu section={section} setSection={setSection} />
                                 </div>
                             </CardHeader>
                         }
                     >
-                        <Header sortConfig={sortConfig} requestSort={requestSort} />
+                        {section && section === 'portfolio' && (
+                            <>
+                                <Header sortConfig={sortConfig} requestSort={requestSort} />
+                                <div className="flex-col space-y-2">
+                                    {items && items.length > 0 ? (
+                                        items.map((farm: any, i: number) => {
+                                            if (farm.type === 'SLP') {
+                                                return <LiquidityPosition key={farm.address + '_' + i} farm={farm} />
+                                            } else {
+                                                return null
+                                            }
+                                        })
+                                    ) : (
+                                        <>
+                                            {term ? (
+                                                <div className="w-full text-center py-6">No Results.</div>
+                                            ) : (
+                                                <div className="w-full text-center py-6">
+                                                    <Dots>Fetching Farms</Dots>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </>
+                        )}
                         {section && section === 'slp' && (
-                            <div className="flex-col space-y-2">
-                                {items && items.length > 0 ? (
-                                    items.map((farm: any, i: number) => {
-                                        if (farm.type === 'SLP') {
-                                            return <LiquidityPosition key={farm.address + '_' + i} farm={farm} />
-                                        } else {
-                                            return null
-                                        }
-                                    })
-                                ) : (
-                                    <>
-                                        {term ? (
-                                            <div className="w-full text-center py-6">No Results.</div>
-                                        ) : (
-                                            <div className="w-full text-center py-6">
-                                                <Dots>Fetching Instruments</Dots>
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-                            </div>
+                            <>
+                                <Header sortConfig={sortConfig} requestSort={requestSort} />
+                                <div className="flex-col space-y-2">
+                                    {items && items.length > 0 ? (
+                                        items.map((farm: any, i: number) => {
+                                            if (farm.type === 'SLP') {
+                                                return <LiquidityPosition key={farm.address + '_' + i} farm={farm} />
+                                            } else {
+                                                return null
+                                            }
+                                        })
+                                    ) : (
+                                        <>
+                                            {term ? (
+                                                <div className="w-full text-center py-6">No Results.</div>
+                                            ) : (
+                                                <div className="w-full text-center py-6">
+                                                    <Dots>Fetching Farms</Dots>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </>
                         )}
                         {section && section === 'kmp' && (
-                            <div className="flex-col space-y-2">
-                                {items && items.length > 0 ? (
-                                    items.map((farm: any, i: number) => {
-                                        if (farm.type === 'KMP') {
-                                            return <KashiLending key={farm.address + '_' + i} farm={farm} />
-                                        } else {
-                                            return null
-                                        }
-                                    })
-                                ) : (
-                                    <>
-                                        {term ? (
-                                            <div className="w-full text-center py-6">No Results.</div>
-                                        ) : (
-                                            <div className="w-full text-center py-6">
-                                                <Dots>Fetching Instruments</Dots>
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-                            </div>
+                            <>
+                                <Header sortConfig={sortConfig} requestSort={requestSort} />
+                                <div className="flex-col space-y-2">
+                                    {items && items.length > 0 ? (
+                                        items.map((farm: any, i: number) => {
+                                            if (farm.type === 'KMP') {
+                                                return <KashiLending key={farm.address + '_' + i} farm={farm} />
+                                            } else {
+                                                return null
+                                            }
+                                        })
+                                    ) : (
+                                        <>
+                                            {term ? (
+                                                <div className="w-full text-center py-6">No Results.</div>
+                                            ) : (
+                                                <div className="w-full text-center py-6">
+                                                    <Dots>Fetching Farms</Dots>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </>
                         )}
                         {section && section === 'all' && (
-                            <div className="flex-col space-y-2">
-                                {items && items.length > 0 ? (
-                                    items.map((farm: any, i: number) => {
-                                        if (farm.type === 'KMP') {
-                                            return <KashiLending key={farm.address + '_' + i} farm={farm} />
-                                        } else if (farm.type === 'SLP') {
-                                            return <LiquidityPosition key={farm.address + '_' + i} farm={farm} />
-                                        } else {
-                                            return null
-                                        }
-                                    })
-                                ) : (
-                                    <>
-                                        {term ? (
-                                            <div className="w-full text-center py-6">No Results.</div>
-                                        ) : (
-                                            <div className="w-full text-center py-6">
-                                                <Dots>Fetching Instruments</Dots>
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-                            </div>
+                            <>
+                                <Header sortConfig={sortConfig} requestSort={requestSort} />
+                                <div className="flex-col space-y-2">
+                                    {items && items.length > 0 ? (
+                                        items.map((farm: any, i: number) => {
+                                            if (farm.type === 'KMP') {
+                                                return <KashiLending key={farm.address + '_' + i} farm={farm} />
+                                            } else if (farm.type === 'SLP') {
+                                                return <LiquidityPosition key={farm.address + '_' + i} farm={farm} />
+                                            } else {
+                                                return null
+                                            }
+                                        })
+                                    ) : (
+                                        <>
+                                            {term ? (
+                                                <div className="w-full text-center py-6">No Results.</div>
+                                            ) : (
+                                                <div className="w-full text-center py-6">
+                                                    <Dots>Fetching Farms</Dots>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </>
                         )}
                     </Card>
                 </div>
