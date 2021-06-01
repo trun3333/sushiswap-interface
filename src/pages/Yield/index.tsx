@@ -173,6 +173,34 @@ export default function Yield(): JSX.Element {
                                 </div>
                             </>
                         )}
+                        {section && section === 'all' && (
+                            <>
+                                <Header sortConfig={sortConfig} requestSort={requestSort} />
+                                <div className="flex-col space-y-2">
+                                    {items && items.length > 0 ? (
+                                        items.map((farm: any, i: number) => {
+                                            if (farm.type === 'KMP') {
+                                                return <KashiLending key={farm.address + '_' + i} farm={farm} />
+                                            } else if (farm.type === 'SLP') {
+                                                return <LiquidityPosition key={farm.address + '_' + i} farm={farm} />
+                                            } else {
+                                                return null
+                                            }
+                                        })
+                                    ) : (
+                                        <>
+                                            {term ? (
+                                                <div className="w-full text-center py-6">No Results.</div>
+                                            ) : (
+                                                <div className="w-full text-center py-6">
+                                                    <Dots>Fetching Farms</Dots>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </>
+                        )}
                         {section && section === 'slp' && (
                             <>
                                 <Header sortConfig={sortConfig} requestSort={requestSort} />
@@ -225,15 +253,13 @@ export default function Yield(): JSX.Element {
                                 </div>
                             </>
                         )}
-                        {section && section === 'all' && (
+                        {section && section === 'mcv2' && (
                             <>
                                 <Header sortConfig={sortConfig} requestSort={requestSort} />
                                 <div className="flex-col space-y-2">
                                     {items && items.length > 0 ? (
                                         items.map((farm: any, i: number) => {
-                                            if (farm.type === 'KMP') {
-                                                return <KashiLending key={farm.address + '_' + i} farm={farm} />
-                                            } else if (farm.type === 'SLP') {
+                                            if (farm.type === 'SLP' && farm.contract === 'masterchefv2') {
                                                 return <LiquidityPosition key={farm.address + '_' + i} farm={farm} />
                                             } else {
                                                 return null

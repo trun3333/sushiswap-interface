@@ -14,7 +14,16 @@ const useMasterChefV2 = () => {
     const deposit = useCallback(
         async (pid: number, amount: string, name: string, decimals = 18) => {
             // KMP decimals depend on asset, SLP is always 18
-            console.log('depositing...', pid, amount, name, masterChefV2Contract?.address)
+            console.log(
+                'depositing...',
+                pid,
+                amount,
+                ethers.utils.parseUnits(amount, decimals),
+                name,
+                masterChefV2Contract?.address,
+                masterChefV2Contract,
+                account
+            )
             try {
                 const tx = await masterChefV2Contract?.deposit(pid, ethers.utils.parseUnits(amount, decimals), account)
                 return addTransaction(tx, { summary: `Deposit ${name}` })
