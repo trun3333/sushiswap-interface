@@ -2,9 +2,14 @@ import React, { useState } from 'react'
 import { formattedNum, formattedPercent } from '../../../../utils'
 import { DoubleLogo, Paper } from '../../components'
 import { MasterChefV1Details, MasterChefV2Details, MiniChefDetails } from '../Details'
+import { useActiveWeb3React } from '../../../../hooks/useActiveWeb3React'
+import { ChainId } from '@sushiswap/sdk'
+import AsyncTokenIcon from '../../../../kashi/components/AsyncTokenIcon'
 
 const LiquidityPosition = ({ farm }: any) => {
     const [expand, setExpand] = useState<boolean>(false)
+    const { chainId } = useActiveWeb3React()
+
     return (
         <>
             {farm.type === 'SLP' && (
@@ -31,14 +36,35 @@ const LiquidityPosition = ({ farm }: any) => {
                         onClick={() => setExpand(!expand)}
                     >
                         <div className="col-span-1 flex items-center">
-                            <div className="mr-4">
-                                <DoubleLogo
-                                    a0={farm.liquidityPair.token0.id}
-                                    a1={farm.liquidityPair.token1.id}
-                                    size={40}
-                                    margin={true}
-                                />
-                            </div>
+                            {chainId === ChainId.MATIC ? (
+                                <div className="md:col-span-3 flex flex-col space-y-2">
+                                    <div className="mr-4 flex flex-row space-x-2 items-center">
+                                        <div>
+                                            <AsyncTokenIcon
+                                                address={farm.liquidityPair.token0.id}
+                                                chainId={chainId}
+                                                className="block w-10 h-10 rounded-sm"
+                                            />
+                                        </div>
+                                        <div>
+                                            <AsyncTokenIcon
+                                                address={farm.liquidityPair.token1.id}
+                                                chainId={chainId}
+                                                className="block w-10 h-10 rounded-sm"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="mr-4">
+                                    <DoubleLogo
+                                        a0={farm.liquidityPair.token0.id}
+                                        a1={farm.liquidityPair.token1.id}
+                                        size={40}
+                                        margin={true}
+                                    />
+                                </div>
+                            )}
                         </div>
                         <div className="md:col-span-1 hidden md:flex flex-row space-x-2 justify-end items-center ml-4">
                             <div>

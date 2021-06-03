@@ -103,10 +103,12 @@ const useFarms = () => {
             masterchef.query({
                 query: poolsQuery
             }),
-            sushiData.bentobox.kashiStakedInfo()
+            sushiData.bentobox.kashiStakedInfo(),
+            getAverageBlockTime()
         ])
         const pools = results[0]?.data.pools
         const kashiPairs = results[1].filter(result => result !== undefined) // filter out undefined (not in onsen) from all kashiPairs
+        const averageBlockTime = results[2]
 
         const KASHI_PAIRS = pools
             .filter((pool: any) => {
@@ -123,6 +125,13 @@ const useFarms = () => {
             })
             .map((pool: any) => {
                 const pair = kashiPairs.find((pair: any) => pair?.id === pool?.pair)
+                console.log('pair:', pair)
+
+                const blocksPerHour = 3600 / Number(averageBlockTime)
+                const rewardPerBlock = pair?.rewardPerBlock
+
+                const sushiRewardPerDay = rewardPerBlock ? rewardPerBlock * blocksPerHour * 24 : 0
+
                 return {
                     ...pool,
                     ...pair,
@@ -139,6 +148,7 @@ const useFarms = () => {
                         },
                         asset: { id: pair?.asset, symbol: pair?.assetSymbol, decimals: pair?.assetDecimals }
                     },
+                    sushiRewardPerDay: sushiRewardPerDay,
                     roiPerYear: pair?.roiPerYear,
                     totalAssetStaked: pair?.totalAssetStaked
                         ? pair?.totalAssetStaked / Math.pow(10, pair?.assetDecimals)

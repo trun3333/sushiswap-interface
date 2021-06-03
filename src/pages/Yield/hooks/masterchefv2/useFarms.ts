@@ -96,7 +96,7 @@ const useFarms = () => {
                 const balance = Number(pool.slpBalance / 1e18)
                 const balanceUSD = (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD)
 
-                const sushiPerBlock = 20
+                const sushiPerBlock = 18.6
                 const rewardPerBlock = ((pool.allocPoint / 26480) * 20) / 1e18
 
                 const blocksPerHour = 3600 / Number(averageBlockTime)

@@ -118,6 +118,8 @@ export default function Yield(): JSX.Element {
     // Sorting Setup
     const { items, requestSort, sortConfig } = useSortableData(flattenSearchResults)
 
+    console.log('term:', term)
+
     return (
         <>
             <Helmet>
@@ -151,6 +153,7 @@ export default function Yield(): JSX.Element {
                                 <div className="flex-col space-y-2">
                                     {portfolio && portfolio.length > 0 ? (
                                         portfolio.map((farm: any, i: number) => {
+                                            console.log('portfolio farm:', farm)
                                             if (farm.type === 'KMP') {
                                                 return <KashiLending key={farm.address + '_' + i} farm={farm} />
                                             } else if (farm.type === 'SLP') {
