@@ -1,4 +1,5 @@
 import React from 'react'
+import Badge from '../../components/Badge'
 
 const Menu = ({ section, setSection }: any) => {
     return (
@@ -41,13 +42,14 @@ const Menu = ({ section, setSection }: any) => {
                     Liquidity Yield Farms
                 </div>
                 <div
-                    className={`cursor-pointer bg-dark-900 rounded flex items-center px-4 py-6 border border-transparent ${section ===
+                    className={`cursor-pointer bg-dark-900 rounded flex justify-between items-center px-4 py-6 border border-transparent ${section ===
                         'mcv2' && 'border-gradient'}`}
                     onClick={() => {
                         return setSection('mcv2')
                     }}
                 >
                     Double Yield Farms
+                    <Badge color="blue">New</Badge>
                 </div>
                 {/* <Card
                 className="h-full bg-dark-900"
