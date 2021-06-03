@@ -101,7 +101,11 @@ export default function Yield(): JSX.Element {
             minichefPortfolio = minichefPositionsWithDetails
         }
 
-        setPortfolio(_.concat(minichefPortfolio, masterchefv1Portfolio))
+        setPortfolio(
+            _.concat(minichefPortfolio, masterchefv1Portfolio)[0]
+                ? _.concat(minichefPortfolio, masterchefv1Portfolio)
+                : []
+        )
     }, [masterchefv1, masterchefv1Positions, minichef, minichefPositions])
 
     // MasterChef v2
@@ -149,31 +153,42 @@ export default function Yield(): JSX.Element {
                     >
                         {section && section === 'portfolio' && (
                             <>
-                                <Header sortConfig={sortConfig} requestSort={requestSort} />
-                                <div className="flex-col space-y-2">
-                                    {portfolio && portfolio.length > 0 ? (
-                                        portfolio.map((farm: any, i: number) => {
-                                            console.log('portfolio farm:', farm)
-                                            if (farm.type === 'KMP') {
-                                                return <KashiLending key={farm.address + '_' + i} farm={farm} />
-                                            } else if (farm.type === 'SLP') {
-                                                return <LiquidityPosition key={farm.address + '_' + i} farm={farm} />
-                                            } else {
-                                                return null
-                                            }
-                                        })
-                                    ) : (
-                                        <>
-                                            {term ? (
-                                                <div className="w-full text-center py-6">No Results.</div>
+                                {account ? (
+                                    <>
+                                        <Header sortConfig={sortConfig} requestSort={requestSort} />
+                                        <div className="flex-col space-y-2">
+                                            {portfolio && portfolio.length > 0 ? (
+                                                portfolio.map((farm: any, i: number) => {
+                                                    console.log('portfolio farm:', farm, portfolio)
+                                                    if (farm.type === 'KMP') {
+                                                        return <KashiLending key={farm.address + '_' + i} farm={farm} />
+                                                    } else if (farm.type === 'SLP') {
+                                                        return (
+                                                            <LiquidityPosition
+                                                                key={farm.address + '_' + i}
+                                                                farm={farm}
+                                                            />
+                                                        )
+                                                    } else {
+                                                        return null
+                                                    }
+                                                })
                                             ) : (
-                                                <div className="w-full text-center py-6">
-                                                    <Dots>Fetching Portfolio</Dots>
-                                                </div>
+                                                <>
+                                                    {term ? (
+                                                        <div className="w-full text-center py-6">No Results.</div>
+                                                    ) : (
+                                                        <div className="w-full text-center py-6">
+                                                            <Dots>Fetching Portfolio</Dots>
+                                                        </div>
+                                                    )}
+                                                </>
                                             )}
-                                        </>
-                                    )}
-                                </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="w-full text-center py-6">Connect Wallet.</div>
+                                )}
                             </>
                         )}
                         {section && section === 'all' && (
