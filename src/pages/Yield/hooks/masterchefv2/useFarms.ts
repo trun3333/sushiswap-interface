@@ -100,7 +100,7 @@ const useFarms = () => {
                 const rewardPerBlock = ((pool.allocPoint / 26480) * 20) / 1e18
 
                 const blocksPerHour = 3600 / Number(averageBlockTime)
-                const roiPerBlock = (rewardPerBlock * sushiPrice) / balanceUSD
+                const roiPerBlock = (rewardPerBlock * sushiPrice * 2) / balanceUSD // TODO: include alcx pricing
                 const roiPerHour = roiPerBlock * blocksPerHour
                 const roiPerDay = roiPerHour * 24
                 const roiPerMonth = roiPerDay * 30
