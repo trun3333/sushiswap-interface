@@ -85,7 +85,7 @@ export default function InputGroup({
                             }}
                         >
                             <Trans>
-                                Harvest {formattedNum(pending)} SUSHI & {formattedNum(reward)} MATIC
+                                Harvest {formattedNum(pending)} SUSHI & {formattedNum(reward)} ALCX
                             </Trans>
                         </Button>
                     </div>

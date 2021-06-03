@@ -22,7 +22,8 @@ const LiquidityPosition = ({ farm }: any) => {
                             {farm && farm.liquidityPair.token0.symbol + '-' + farm.liquidityPair.token1.symbol}
                         </div>
                         <div className="hidden md:block text-sm sm:text-base ml-4 text-gray-500 text-right">
-                            {'SUSHI'}
+                            {/* TODO: remove hard coding */}
+                            {farm && farm.contract === 'masterchefv2' ? 'SUSHI & ALCX' : 'SUSHI'}
                         </div>
                         <div className="text-gray-500 text-sm sm:text-base text-right">
                             {formattedNum(farm.tvl, true)}
@@ -68,10 +69,35 @@ const LiquidityPosition = ({ farm }: any) => {
                         </div>
                         <div className="md:col-span-1 hidden md:flex flex-row space-x-2 justify-end items-center ml-4">
                             <div>
-                                <div className="text-gray-500 text-right font-semibold text-sm sm:text-sm">
-                                    {formattedNum(farm.sushiRewardPerDay)} SUSHI
-                                </div>
-                                <div className="text-gray-500 text-right text-xs">per day</div>
+                                {/* TODO: remove hard coding */}
+                                {farm && farm.contract === 'minichef' && (
+                                    <>
+                                        <div className="text-gray-500 text-right font-semibold text-xs">
+                                            {formattedNum(farm.sushiRewardPerDay)} SUSHI per day
+                                        </div>
+                                        <div className="text-gray-500 text-right font-semibold text-xs">
+                                            {formattedNum(farm.secondaryRewardPerDay)} WMATIC per day
+                                        </div>
+                                    </>
+                                )}
+                                {farm && farm.contract === 'masterchefv2' && (
+                                    <>
+                                        <div className="text-gray-500 text-right font-semibold text-xs">
+                                            {formattedNum(farm.sushiRewardPerDay)} SUSHI per day
+                                        </div>
+                                        <div className="text-gray-500 text-right font-semibold text-xs">
+                                            {formattedNum(farm.secondaryRewardPerDay)} ALCX per day
+                                        </div>
+                                    </>
+                                )}
+                                {farm && farm.contract === 'masterchefv1' && (
+                                    <>
+                                        <div className="text-gray-500 text-right font-semibold text-sm sm:text-sm">
+                                            {formattedNum(farm.sushiRewardPerDay)} SUSHI
+                                        </div>
+                                        <div className="text-gray-500 text-right text-xs">per day</div>
+                                    </>
+                                )}
                             </div>
                         </div>
                         <div className="md:col-span-1 flex justify-end items-center">
