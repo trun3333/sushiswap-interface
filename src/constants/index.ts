@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Percent, Token, WETH } from '@sushiswap/sdk'
+import { ChainId, JSBI, Percent, Token, WETH, SUSHI_ADDRESS } from '@sushiswap/sdk'
 import { fortmatic, injected, lattice, portis, torus, walletconnect, walletlink } from '../connectors'
 
 import { AbstractConnector } from '@web3-react/abstract-connector'
@@ -25,27 +25,44 @@ export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 export const SUSHI: ChainTokenMap = {
     [ChainId.MAINNET]: new Token(
         ChainId.MAINNET,
-        '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
+        //'0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
+        SUSHI_ADDRESS[ChainId.MAINNET],
         18,
         'SUSHI',
         'SushiToken'
     ),
     [ChainId.ROPSTEN]: new Token(
         ChainId.ROPSTEN,
-        '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
+        // '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
+        SUSHI_ADDRESS[ChainId.ROPSTEN],
         18,
         'SUSHI',
         'SushiToken'
     ),
     [ChainId.RINKEBY]: new Token(
         ChainId.RINKEBY,
-        '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
+        // '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
+        SUSHI_ADDRESS[ChainId.RINKEBY],
         18,
         'SUSHI',
         'SushiToken'
     ),
-    [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F', 18, 'SUSHI', 'SushiToken'),
-    [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F', 18, 'SUSHI', 'SushiToken'),
+    [ChainId.GÖRLI]: new Token(
+        ChainId.GÖRLI,
+        // '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
+        SUSHI_ADDRESS[ChainId.GÖRLI],
+        18,
+        'SUSHI',
+        'SushiToken'
+    ),
+    [ChainId.KOVAN]: new Token(
+        ChainId.KOVAN,
+        // '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
+        SUSHI_ADDRESS[ChainId.KOVAN],
+        18,
+        'SUSHI',
+        'SushiToken'
+    ),
     [ChainId.FANTOM]: new Token(ChainId.FANTOM, '0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC', 18, 'SUSHI', 'SushiToken')
 }
 

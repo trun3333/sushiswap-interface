@@ -381,6 +381,9 @@ export function useSushiRollContract(version: 'v1' | 'v2' = 'v2'): Contract | nu
             case ChainId.ROPSTEN:
                 address = '0xCaAbdD9Cf4b61813D4a52f980d6BC1B713FE66F5'
                 break
+            case ChainId.KOVAN:
+                address = '0x3864709fEBd8bFFa16A11EdC9F42006fDea1c4E1'
+                break
             case ChainId.BSC:
                 if (version === 'v1') {
                     address = '0x677978dE066b3f5414eeA56644d9fCa3c75482a1'
