@@ -17,3 +17,5 @@ Copy the ZIP pack file to the folder `sushiswap-interface`
 cd folder `sushiswap-interface`
 In file `package.json`, replace `"@sushiswap/sdk": "5.0.0-canary.7"`
 with `"@sushiswap/sdk": "file:sushiswap-sdk-5.0.0-canary.7.tgz",`
+Remember to run `yarn cache clean` befor `yarn`.
+Otherwise, legacy cache won't take the new change of ZIP pack file into account.

@@ -384,6 +384,10 @@ export function useSushiRollContract(version: 'v1' | 'v2' = 'v2'): Contract | nu
             case ChainId.KOVAN:
                 address = '0x3864709fEBd8bFFa16A11EdC9F42006fDea1c4E1'
                 break
+            // On BSC testnet, SushiRoll is not deployed as the original UniswapV2Router02 does not exist
+            // case ChainId.BSC_TESTNET:
+            //     address = '0x3864709fEBd8bFFa16A11EdC9F42006fDea1c4E1'
+            //     break
             case ChainId.BSC:
                 if (version === 'v1') {
                     address = '0x677978dE066b3f5414eeA56644d9fCa3c75482a1'
