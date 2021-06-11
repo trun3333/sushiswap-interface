@@ -71,6 +71,14 @@ export const SUSHI: ChainTokenMap = {
         'SUSHI',
         'SushiToken'
     ),
+    [ChainId.MATIC_TESTNET]: new Token(
+        ChainId.MATIC_TESTNET,
+        // '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
+        SUSHI_ADDRESS[ChainId.MATIC_TESTNET],
+        18,
+        'SUSHI',
+        'SushiToken'
+    ),
     [ChainId.FANTOM]: new Token(ChainId.FANTOM, '0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC', 18, 'SUSHI', 'SushiToken')
 }
 

@@ -8,7 +8,9 @@ Run the below cmds to build and generate the ZIP pack file
 
 ```
 yarn
+rm -rf dist
 yarn build
+rm -rf sushiswap-sdk-5.0.0-canary.7.tgz
 npm pack
 ```
 
@@ -19,3 +21,11 @@ In file `package.json`, replace `"@sushiswap/sdk": "5.0.0-canary.7"`
 with `"@sushiswap/sdk": "file:sushiswap-sdk-5.0.0-canary.7.tgz",`
 Remember to run `yarn cache clean` befor `yarn`.
 Otherwise, legacy cache won't take the new change of ZIP pack file into account.
+So, run the below cmds
+
+```
+rm -rf node_modules
+rm -rf yarn.lock
+yarn cache clean
+yarn
+```
